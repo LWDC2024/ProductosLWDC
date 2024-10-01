@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Inventario</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="card">
+        <h1>Gestión de Inventario</h1>
+        <div class="controls">
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="search" placeholder="Buscar por nombre o ID">
+            </div>
+            <button id="addProductBtn">Agregar Producto</button>
+        </div>
+        <div style="overflow-x: auto;">
+            <table id="productTable">
+                <thead>
+                    <tr>
+                        <th>Imagen</th>
+                        <th>ID</th>
+                        <th>Producto</th>
+                        <th>Precio</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% products.forEach(function(product) { %>
+                        <tr>
+                            <td><img src="<%= product.image %>" alt="<%= product.name %>" class="product-image"></td>
+                            <td><%= product.id %></td>
+                            <td><%= product.name %></td>
+                            <td><%= product.price %></td>
+                            <td>
+                                <button class="edit-btn" data-id="<%= product.id %>">Editar</button>
+                                <button class="delete-btn" data-id="<%= product.id %>">Eliminar</button>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination">
+            <span id="pageInfo">Mostrando 0 - 0 de 0</span>
+            <div>
+                <button id="prevPage">Anterior</button>
+                <button id="nextPage">Siguiente</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Agregar Producto</h2>
+            <form id="productForm">
+                <input type="hidden" id="productId">
+                <label for="productName">Nombre:</label>
+                <input type="text" id="productName" required>
+                <label for="productPrice">Precio:</label>
+                <input type="text" id="productPrice" required>
+                <label for="productImage">URL de la imagen:</label>
+                <input type="text" id="productImage" required>
+                <button type="submit">Guardar</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        let allProducts = <%- JSON.stringify(products) %>;
+        let filteredProducts = [...allProducts];
+
+        function renderTable() {
+            const tableBody = document.querySelector('#productTable tbody');
+            tableBody.innerHTML = '';
+            
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const paginatedProducts = filteredProducts.slice(start, end);
+
+            paginatedProducts.forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><img src="${product.image}" alt="${product.name}" class="product-image"></td>
+                    <td>${product.id}</td>
+                    <td>${product.name}</td>
+                    <td>${product.price}</td>
+                    <td>
+                        <button class="edit-btn" data-id="${product.id}">Editar</button>
+                        <button class="delete-btn" data-id="${product.id}">Eliminar</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            updatePagination();
+        }
+
+        function updatePagination() {
+            const pageInfo = document.getElementById('pageInfo');
+            const start = (currentPage - 1) * itemsPerPage + 1;
+            const end = Math.min(currentPage * itemsPerPage, filteredProducts.length);
+            pageInfo.textContent = `Mostrando ${start} - ${end} de ${filteredProducts.length}`;
+
+            document.getElementById('prevPage').disabled = currentPage === 1;
+            document.getElementById('nextPage').disabled = end >= filteredProducts.length;
+        }
+
+        document.getElementById('search').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            filteredProducts = allProducts.filter(product => 
+                product.name.toLowerCase().includes(searchTerm) ||
+                product.id.toString().includes(searchTerm)
+            );
+            currentPage = 1;
+            renderTable();
+        });
+
+        document.getElementById('prevPage').addEventListener('click', function() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderTable();
+            }
+        });
+
+        document.getElementById('nextPage').addEventListener('click', function() {
+            if (currentPage * itemsPerPage < filteredProducts.length) {
+                currentPage++;
+                renderTable();
+            }
+        });
+
+        // Modal functionality
+        const modal = document.getElementById('productModal');
+        const addProductBtn = document.getElementById('addProductBtn');
+        const closeBtn = document.getElementsByClassName('close')[0];
+        const productForm = document.getElementById('productForm');
+
+        addProductBtn.onclick = function() {
+            document.getElementById('modalTitle').textContent = 'Agregar Producto';
+            document.getElementById('productId').value = '';
+            document.getElementById('productName').value = '';
+            document.getElementById('productPrice').value = '';
+            document.getElementById('productImage').value = '';
+            modal.style.display = 'block';
+        }
+
+        closeBtn.onclick = function() {
+            modal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        productForm.onsubmit = function(e) {
+            e.preventDefault();
+            const id = document.getElementById('productId').value;
+            const name = document.getElementById('productName').value;
+            const price = document.getElementById('productPrice').value;
+            const image = document.getElementById('productImage').value;
+
+            if (id) {
+                // Update existing product
+                fetch(`/product/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name, price, image }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const index = allProducts.findIndex(p => p.id == id);
+                    allProducts[index] = { id, name, price, image };
+                    filteredProducts = [...allProducts];
+                    renderTable();
+                    modal.style.display = 'none';
+                });
+            } else {
+                // Add new product
+                fetch('/product', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name, price, image }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    allProducts.push({ id: data.id, name, price, image });
+                    filteredProducts = [...allProducts];
+                    renderTable();
+                    modal.style.display = 'none';
+                });
+            }
+        }
+
+        // Edit and Delete functionality
+        document.getElementById('productTable').addEventListener('click', function(e) {
+            if (e.target.classList.contains('edit-btn')) {
+                const id = e.target.getAttribute('data-id');
+                const product = allProducts.find(p => p.id == id);
+                document.getElementById('modalTitle').textContent = 'Editar Producto';
+                document.getElementById('productId').value = product.id;
+                document.getElementById('productName').value = product.name;
+                document.getElementById('productPrice').value = product.price;
+                document.getElementById('productImage').value = product.image;
+                modal.style.display = 'block';
+            } else if (e.target.classList.contains('delete-btn')) {
+                const id = e.target.getAttribute('data-id');
+                if (confirm('¿Estás seguro de que quieres eliminar este producto?')) {
+                    fetch(`/product/${id}`, { method: 'DELETE' })
+                    .then(response => response.json())
+                    .then(data => {
+                        allProducts = allProducts.filter(p => p.id != id);
+                        filteredProducts = [...allProducts];
+                        renderTable();
+                    });
+                }
+            }
+        });
+
+        // Initialize the table
+        renderTable();
+    </script>
+</body>
+</html>
