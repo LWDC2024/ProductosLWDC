@@ -33,23 +33,18 @@ let db = new sqlite3.Database(DBSOURCE, (err) => {
             } else {
                 // Table just created, creating some rows
                 var insert = 'INSERT INTO product (id, name, price, image, category, sub_category, pagination) VALUES (?,?,?,?,?,?,?)';
-                db.run(insert, ["554", "Colchón Visco Cama Nido", "79,99 €", "/placeholder.svg?height=50&width=50", "", "", 2]);
-                db.run(insert, ["279", "Colchón Basic Cama Nido", "101,46 €", "/placeholder.svg?height=50&width=50", "", "", 3]);
-                db.run(insert, ["562", "Topper Visco 4", "103,99 €", "/placeholder.svg?height=50&width=50", "", "", 4]);
-                db.run(insert, ["263", "Colchón Visco King 1", "137,51 €", "/placeholder.svg?height=50&width=50", "", "", 5]);
-                db.run(insert, ["265", "Colchón Visco Energy 2", "158,92 €", "/placeholder.svg?height=50&width=50", "", "", 6]);
-                db.run(insert, ["364", "Colchón Visco Fresh 3", "183,11 €", "/placeholder.svg?height=50&width=50", "", "", 7]);
-                db.run(insert, ["266", "Colchón Visco Energy 2 Plus", "191,97 €", "/placeholder.svg?height=50&width=50", "", "", 8]);
-                db.run(insert, ["373", "Colchón Visco Fresh 3 Plus", "238,99 €", "/placeholder.svg?height=50&width=50", "", "", 9]);
-                db.run(insert, ["270", "Colchón Viscarbono Artesano 9", "266,99 €", "/placeholder.svg?height=50&width=50", "", "", 10]);
-                db.run(insert, ["648", "Colchón Visco New Plus", "317,60 €", "/placeholder.svg?height=50&width=50", "", "", 11]);
-                db.run(insert, ["630", "Colchón Visco Luxe H", "344,92 €", "/placeholder.svg?height=50&width=50", "", "", 12]);
-                db.run(insert, ["367", "Colchón Visco Nature Memory", "954,52 €", "/placeholder.svg?height=50&width=50", "", "", 13]);
-                db.run(insert, ["372", "Colchón Viscarbono Avantgarde 6", "267,73 €", "/placeholder.svg?height=50&width=50", "", "", 14]);
-                db.run(insert, ["409", "Colchón Látex Nature Confort", "415,26 €", "/placeholder.svg?height=50&width=50", "", "", 15]);
-                db.run(insert, ["426", "Colchón Látex Nature Confort Plus", "515,67 €", "/placeholder.svg?height=50&width=50", "", "", 16]);
-                db.run(insert, ["497", "Colchón Visco Truck", "134,47 €", "/placeholder.svg?height=50&width=50", "", "", 17]);
-                db.run(insert, ["496", "Colchón Basic Truck", "127,54 €", "/placeholder.svg?height=50&width=50", "", "", 18]);
+                db.run(insert, ["562", "Topper Visco 4", "103,99 €", "https://lawebdelcolchon.es/content/up-products-images/562/300x300/1_562.jpg", "", "", 4]);
+                db.run(insert, ["266", "Colchón Visco Energy 2 Plus", "191,97 €", "https://lawebdelcolchon.es/content/up-products-images/266/300x300/1_266.jpg", "", "", 8]);
+                db.run(insert, ["373", "Colchón Visco Fresh 3 Plus", "238,99 €", "https://lawebdelcolchon.es/content/up-products-images/373/300x300/1_373.jpg", "", "", 9]);
+                db.run(insert, ["270", "Colchón Viscarbono Artesano 9", "266,99 €", "https://lawebdelcolchon.es/content/up-products-images/270/300x300/1_270.jpg", "", "", 10]);
+                db.run(insert, ["648", "Colchón Visco New Plus", "317,60 €", "https://lawebdelcolchon.es/content/up-products-images/648/300x300/1_648.jpg", "", "", 11]);
+                db.run(insert, ["630", "Colchón Visco Luxe H", "344,92 €", "https://lawebdelcolchon.es/content/up-products-images/630/300x300/1_630.jpg", "", "", 12]);
+                db.run(insert, ["367", "Colchón Visco Nature Memory", "954,52 €", "https://lawebdelcolchon.es/content/up-products-images/367/300x300/1_367.jpg", "", "", 13]);
+                db.run(insert, ["372", "Colchón Viscarbono Avantgarde 6", "267,73 €", "https://lawebdelcolchon.es/content/up-products-images/372/300x300/1_372.jpg", "", "", 14]);
+                db.run(insert, ["409", "Colchón Látex Nature Confort", "415,26 €", "https://lawebdelcolchon.es/content/up-products-images/409/300x300/1_409.jpg", "", "", 15]);
+                db.run(insert, ["426", "Colchón Látex Nature Confort Plus", "515,67 €", "https://lawebdelcolchon.es/content/up-products-images/426/300x300/1_426.jpg", "", "", 16]);
+                db.run(insert, ["497", "Colchón Visco Truck", "134,47 €", "https://lawebdelcolchon.es/content/up-products-images/497/300x300/1_497.jpg", "", "", 17]);
+                db.run(insert, ["496", "Colchón Basic Truck", "127,54 €", "https://lawebdelcolchon.es/content/up-products-images/496/300x300/1_496.jpg", "", "", 18]);
                 db.run(insert, ["631", "Cabecero tapizado Julie", "38,99 €", "/placeholder.svg?height=50&width=50", "", "", 19]);
                 db.run(insert, ["632", "Cabecero tapizado juvenil Julie", "41,99 €", "/placeholder.svg?height=50&width=50", "", "", 20]);
                 db.run(insert, ["712", "Cabecero tapizado Julie Madera", "49,99 €", "/placeholder.svg?height=50&width=50", "", "", 21]);
